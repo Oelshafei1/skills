@@ -1,31 +1,18 @@
 ---
 name: newebpay
 description: >
-  Guides user through NewebPay integration setup including environment configuration,
-  credential setup, and skill routing. Use when starting NewebPay integration or needing general guidance.
-  Triggers: "newebpay", "藍新", "NewebPay", "藍新金流", "newebpay help", "藍新串接教學"
+  Provides NewebPay integration overview and guides users to the appropriate skill.
+  Use when starting NewebPay integration, setting up environment, or needing general guidance
+  about 藍新金流.
 argument-hint: "[功能: checkout/query/refund]"
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Grep
-  - Glob
 user-invocable: true
-license: MIT
-metadata:
-  author: paid-tw
-  version: "2.0.0"
 ---
 
-# 藍新金流整合任務
+# 藍新金流整合指南
 
 你的任務是幫助用戶設定藍新金流(NewebPay)環境並引導至適當的串接功能。
 
-## 任務流程
-
-### Step 1: 分析用戶需求
+## 用戶需求分析
 
 用戶輸入: `$ARGUMENTS`
 
@@ -33,9 +20,9 @@ metadata:
 - 若包含「串接」「checkout」「建立交易」「MPG」→ 引導使用 `/newebpay-checkout`
 - 若包含「查詢」「query」「訂單狀態」→ 引導使用 `/newebpay-query`
 - 若包含「退款」「refund」「取消」→ 引導使用 `/newebpay-refund`
-- 若無特定指定 → 執行 Step 2 環境設定檢查
+- 若無特定指定 → 提供以下環境設定引導
 
-### Step 2: 環境設定檢查
+## 環境設定檢查
 
 詢問用戶以下問題：
 
@@ -50,11 +37,10 @@ metadata:
    - 是，已有正式環境帳號
    - 否，需要申請
 
-### Step 3: 建立環境設定
+## 環境變數設定
 
-根據用戶的框架，建立環境變數設定：
+引導用戶建立環境變數：
 
-**環境變數範本:**
 ```bash
 NEWEBPAY_MERCHANT_ID=MS12345678
 NEWEBPAY_HASH_KEY=your_hash_key
@@ -67,31 +53,20 @@ NEWEBPAY_ENV=test  # test 或 production
 2. 加入上述環境變數
 3. 確保 `.env` 已加入 `.gitignore`
 
-### Step 4: 建立加密模組
+## 加密模組
 
-根據用戶框架，提供對應的加密解密函式：
+根據用戶框架，提供對應的加密解密函式。詳細實作請參閱 [scripts/encryption.php](../../scripts/encryption.php)
 
 **PHP:**
 ```php
 function encrypt($data, $key, $iv) {
-    $encrypted = openssl_encrypt(
-        $data,
-        "AES-256-CBC",
-        $key,
-        OPENSSL_RAW_DATA,
-        $iv
-    );
+    $encrypted = openssl_encrypt($data, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv);
     return bin2hex($encrypted);
 }
 
 function decrypt($encrypted_hex, $key, $iv) {
-    return rtrim(openssl_decrypt(
-        hex2bin($encrypted_hex),
-        "AES-256-CBC",
-        $key,
-        OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
-        $iv
-    ), "\x00..\x1F");
+    return rtrim(openssl_decrypt(hex2bin($encrypted_hex), "AES-256-CBC", $key,
+        OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv), "\x00..\x1F");
 }
 
 function generateSha($trade_info, $key, $iv) {
@@ -110,22 +85,14 @@ function encrypt(data, key, iv) {
   return encrypted;
 }
 
-function decrypt(encrypted, key, iv) {
-  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  return decrypted.replace(/[\x00-\x1F]+$/g, '');
-}
-
 function generateSha(tradeInfo, key, iv) {
   return crypto.createHash('sha256')
     .update(`HashKey=${key}&${tradeInfo}&HashIV=${iv}`)
-    .digest('hex')
-    .toUpperCase();
+    .digest('hex').toUpperCase();
 }
 ```
 
-### Step 5: 引導下一步
+## 下一步
 
 完成環境設定後，根據用戶需求引導：
 

@@ -2,8 +2,11 @@
 name: newebpay-query
 description: >
   Implements NewebPay transaction query functionality using QueryTradeInfo API.
-  Use when building order status checking, transaction verification, or payment confirmation features.
-  Triggers: "newebpay query", "藍新查詢", "查詢訂單", "交易狀態", "transaction status"
+  Use when building order status checking, transaction verification, or payment
+  confirmation features for 藍新金流.
+context: fork
+agent: general-purpose
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Write
@@ -12,19 +15,13 @@ allowed-tools:
   - Grep
   - Glob
 user-invocable: true
-license: MIT
-metadata:
-  author: paid-tw
-  version: "2.0.0"
 ---
 
 # 藍新金流交易查詢任務
 
 你的任務是在用戶的專案中實作藍新金流交易查詢功能。
 
-## 任務流程
-
-### Step 1: 確認需求
+## Step 1: 確認需求
 
 詢問用戶：
 
@@ -36,21 +33,19 @@ metadata:
 2. **專案框架**：你使用什麼框架？
    - 確認是否已有 NewebPay 環境設定
 
-### Step 2: 建立查詢功能
+## Step 2: 建立查詢功能
 
 在現有的支付模組中加入查詢方法，或建立新模組。
 
 **核心功能:**
-```
-1. generateCheckValue(orderNo, amount) - 產生 SHA256 檢核碼
-2. queryTrade(orderNo, amount) - 查詢單筆交易
-```
+1. `generateCheckValue(orderNo, amount)` - 產生 SHA256 檢核碼
+2. `queryTrade(orderNo, amount)` - 查詢單筆交易
 
-### Step 3: 實作程式碼
+## Step 3: 實作程式碼
 
 根據框架加入查詢功能。
 
-### Step 4: 整合到應用
+## Step 4: 整合到應用
 
 建議整合方式：
 - **API 端點**: `GET /api/orders/:orderNo/status`
@@ -59,7 +54,7 @@ metadata:
 
 ---
 
-## API 參考資料
+## API 參考
 
 ### 端點
 
@@ -86,25 +81,6 @@ metadata:
 原始字串: IV={HashIV}&Amt={金額}&MerchantID={商店代號}&MerchantOrderNo={訂單編號}&Key={HashKey}
 結果: SHA256 後轉大寫
 ```
-
-### 回應參數
-
-| 參數 | 說明 |
-|------|------|
-| Status | `SUCCESS` 或錯誤代碼 |
-| Message | 回傳訊息 |
-| Result | 查詢結果物件 |
-
-### Result 內容
-
-| 參數 | 說明 |
-|------|------|
-| TradeNo | 藍新交易序號 |
-| MerchantOrderNo | 商店訂單編號 |
-| TradeStatus | 交易狀態 |
-| PaymentType | 支付方式 |
-| PayTime | 付款時間 |
-| Amt | 交易金額 |
 
 ### TradeStatus 交易狀態
 
@@ -228,15 +204,6 @@ class NewebPayQueryService {
   }
 }
 
-// 使用範例
-const query = new NewebPayQueryService();
-const result = await query.queryTrade('ORDER_123456', 1000);
-
-if (result.Status === 'SUCCESS') {
-  const tradeStatus = result.Result.TradeStatus;
-  // 0=未付款, 1=已付款, 2=失敗, 3=取消, 6=退款
-}
-
 module.exports = NewebPayQueryService;
 ```
 
@@ -249,9 +216,3 @@ module.exports = NewebPayQueryService;
 | TRA10001 | 查無此筆交易 | 確認訂單編號正確 |
 | TRA10002 | CheckValue 檢核錯誤 | 確認參數順序與大小寫 |
 | TRA10003 | 時間戳記錯誤 | 確認伺服器時間正確 |
-
-## 相關 Skills
-
-- `/newebpay` - 總覽與環境設定
-- `/newebpay-checkout` - MPG 幕前支付串接
-- `/newebpay-refund` - 退款作業

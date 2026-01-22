@@ -1,10 +1,13 @@
 ---
 name: newebpay-checkout
 description: >
-  Implements NewebPay MPG checkout integration in user's project including AES256 encryption,
-  SHA256 signing, form submission, and response handling.
-  Triggers: "newebpay checkout", "藍新串接", "建立交易", "MPG", "payment integration", "藍新付款"
+  Implements NewebPay MPG checkout integration including AES256 encryption,
+  form submission, and payment callback handling. Use when integrating payment
+  gateway, creating checkout flows, or building 藍新金流 payment pages.
 argument-hint: "[支付方式: 信用卡/LINE Pay/ATM/超商]"
+context: fork
+agent: general-purpose
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Write
@@ -13,19 +16,13 @@ allowed-tools:
   - Grep
   - Glob
 user-invocable: true
-license: MIT
-metadata:
-  author: paid-tw
-  version: "2.0.0"
 ---
 
 # 藍新金流 MPG 支付串接任務
 
 你的任務是在用戶的專案中實作藍新金流 MPG 幕前支付功能。
 
-## 任務流程
-
-### Step 1: 確認專案環境
+## Step 1: 確認專案環境
 
 詢問用戶：
 
@@ -44,7 +41,7 @@ metadata:
 
 用戶輸入: `$ARGUMENTS`
 
-### Step 2: 檢查環境變數
+## Step 2: 檢查環境變數
 
 搜尋專案中的 `.env` 或設定檔，確認是否已設定：
 - `NEWEBPAY_MERCHANT_ID`
@@ -53,7 +50,7 @@ metadata:
 
 若未設定，引導用戶設定環境變數。
 
-### Step 3: 建立支付模組
+## Step 3: 建立支付模組
 
 根據用戶框架建立支付模組檔案。
 
@@ -63,16 +60,13 @@ metadata:
 - Django: `payments/services.py`
 
 **核心功能:**
+1. `encrypt(data)` - AES256 加密
+2. `decrypt(data)` - AES256 解密
+3. `generateSha(tradeInfo)` - SHA256 簽章
+4. `createOrder(orderData)` - 建立訂單並回傳表單資料
+5. `handleNotify(payload)` - 處理回調通知
 
-```
-1. encrypt(data) - AES256 加密
-2. decrypt(data) - AES256 解密
-3. generateSha(tradeInfo) - SHA256 簽章
-4. createOrder(orderData) - 建立訂單並回傳表單資料
-5. handleNotify(payload) - 處理回調通知
-```
-
-### Step 4: 建立支付表單頁面
+## Step 4: 建立支付表單頁面
 
 根據框架建立支付表單，需包含：
 
@@ -86,7 +80,7 @@ metadata:
 </form>
 ```
 
-### Step 5: 建立回調處理
+## Step 5: 建立回調處理
 
 建立兩個端點：
 
@@ -100,7 +94,7 @@ metadata:
    - 用戶支付完成後導向
    - 顯示交易結果
 
-### Step 6: 測試驗證
+## Step 6: 測試驗證
 
 引導用戶進行測試：
 1. 使用測試環境 `https://ccore.newebpay.com`
@@ -110,7 +104,7 @@ metadata:
 
 ---
 
-## API 參考資料
+## API 參考
 
 ### 端點
 
@@ -187,7 +181,6 @@ class NewebPayService
             'NotifyURL' => 'https://yourdomain.com/payment/notify',
         ];
 
-        // 加入支付方式
         foreach ($paymentMethods as $method => $value) {
             $tradeData[$method] = $value;
         }
@@ -213,33 +206,22 @@ class NewebPayService
     private function encrypt($data)
     {
         $padded = $this->addPadding($data);
-        $encrypted = openssl_encrypt(
-            $padded,
-            'AES-256-CBC',
-            $this->hashKey,
-            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
-            $this->hashIv
-        );
+        $encrypted = openssl_encrypt($padded, 'AES-256-CBC', $this->hashKey,
+            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $this->hashIv);
         return bin2hex($encrypted);
     }
 
     private function decrypt($data)
     {
-        $decrypted = openssl_decrypt(
-            hex2bin($data),
-            'AES-256-CBC',
-            $this->hashKey,
-            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
-            $this->hashIv
-        );
+        $decrypted = openssl_decrypt(hex2bin($data), 'AES-256-CBC', $this->hashKey,
+            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $this->hashIv);
         return rtrim($decrypted, "\x00..\x1F");
     }
 
     private function generateSha($tradeInfo)
     {
         return strtoupper(hash('sha256',
-            "HashKey={$this->hashKey}&{$tradeInfo}&HashIV={$this->hashIv}"
-        ));
+            "HashKey={$this->hashKey}&{$tradeInfo}&HashIV={$this->hashIv}"));
     }
 
     private function addPadding($str, $block = 32)
@@ -314,8 +296,7 @@ class NewebPayService {
   generateSha(tradeInfo) {
     return crypto.createHash('sha256')
       .update(`HashKey=${this.hashKey}&${tradeInfo}&HashIV=${this.hashIv}`)
-      .digest('hex')
-      .toUpperCase();
+      .digest('hex').toUpperCase();
   }
 }
 
@@ -331,9 +312,3 @@ module.exports = NewebPayService;
 - [錯誤代碼](references/error-codes.md)
 - [常見情境](references/use-cases.md)
 - [疑難排解](references/troubleshooting.md)
-
-## 相關 Skills
-
-- `/newebpay` - 總覽與環境設定
-- `/newebpay-query` - 交易查詢
-- `/newebpay-refund` - 退款作業

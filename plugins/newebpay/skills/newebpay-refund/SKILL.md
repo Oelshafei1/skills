@@ -1,10 +1,13 @@
 ---
 name: newebpay-refund
 description: >
-  Implements NewebPay refund functionality for credit cards and e-wallets using CreditCard/Close
-  and EWallet/Refund APIs. Use when building refund processing, transaction cancellation, or return payment features.
-  Triggers: "newebpay refund", "藍新退款", "信用卡退款", "取消交易", "refund payment"
+  Implements NewebPay refund functionality for credit cards and e-wallets.
+  Use when building refund processing, transaction cancellation, or return
+  payment features for 藍新金流.
 argument-hint: "[類型: 信用卡/電子錢包]"
+context: fork
+agent: general-purpose
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Write
@@ -13,19 +16,13 @@ allowed-tools:
   - Grep
   - Glob
 user-invocable: true
-license: MIT
-metadata:
-  author: paid-tw
-  version: "2.0.0"
 ---
 
 # 藍新金流退款任務
 
 你的任務是在用戶的專案中實作藍新金流退款功能。
 
-## 任務流程
-
-### Step 1: 確認退款類型
+## Step 1: 確認退款類型
 
 用戶輸入: `$ARGUMENTS`
 
@@ -41,28 +38,24 @@ metadata:
    - 部分退款
    - 自動退款（與訂單系統整合）
 
-### Step 2: 確認環境
+## Step 2: 確認環境
 
 確認專案已設定 NewebPay 環境變數：
 - `NEWEBPAY_MERCHANT_ID`
 - `NEWEBPAY_HASH_KEY`
 - `NEWEBPAY_HASH_IV`
 
-### Step 3: 建立退款模組
+## Step 3: 建立退款模組
 
 根據退款類型建立對應的功能。
 
 **信用卡退款核心功能:**
-```
-1. refundCreditCard(orderNo, amount) - 信用卡退款
-```
+- `refundCreditCard(orderNo, amount)` - 信用卡退款
 
 **電子錢包退款核心功能:**
-```
-1. refundEWallet(tradeNo, orderNo, amount) - 電子錢包退款
-```
+- `refundEWallet(tradeNo, orderNo, amount)` - 電子錢包退款
 
-### Step 4: 整合到應用
+## Step 4: 整合到應用
 
 建議整合方式：
 - **管理後台**: 訂單詳情頁加入退款按鈕
@@ -80,13 +73,6 @@ metadata:
 | 測試 | `https://ccore.newebpay.com/API/CreditCard/Close` |
 | 正式 | `https://core.newebpay.com/API/CreditCard/Close` |
 
-### 請求參數
-
-| 參數 | 類型 | 說明 |
-|------|------|------|
-| MerchantID_ | String | 商店代號 |
-| PostData_ | String | AES256 加密資料 |
-
 ### PostData_ 內容
 
 | 參數 | 類型 | 必填 | 說明 |
@@ -99,7 +85,33 @@ metadata:
 | IndexType | Number | ✓ | `1` (使用訂單編號) |
 | CloseType | Number | ✓ | `2` (退款) |
 
-### PHP 信用卡退款範例
+---
+
+## 電子錢包退款
+
+### API 端點
+
+| 環境 | URL |
+|------|-----|
+| 測試 | `https://ccore.newebpay.com/API/EWallet/Refund` |
+| 正式 | `https://core.newebpay.com/API/EWallet/Refund` |
+
+### PostData_ 內容
+
+| 參數 | 類型 | 必填 | 說明 |
+|------|------|:----:|------|
+| RespondType | String | ✓ | `JSON` |
+| Version | String | ✓ | `1.0` |
+| TimeStamp | Number | ✓ | Unix timestamp |
+| TradeNo | String | ✓ | 藍新交易序號 |
+| MerchantOrderNo | String | ✓ | 原訂單編號 |
+| Amt | Number | ✓ | 退款金額 |
+
+---
+
+## 程式碼範本
+
+### PHP 退款功能
 
 ```php
 <?php
@@ -129,7 +141,40 @@ class NewebPayRefundService
             'MerchantOrderNo' => $orderNo,
             'TimeStamp' => time(),
             'IndexType' => 1,
-            'CloseType' => 2,  // 退款
+            'CloseType' => 2,
+        ];
+
+        $postData = $this->encrypt(http_build_query($data));
+
+        $ch = curl_init($apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'MerchantID_' => $this->merchantId,
+                'PostData_' => $postData,
+            ]),
+            CURLOPT_RETURNTRANSFER => true,
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($response, true);
+    }
+
+    public function refundEWallet($tradeNo, $orderNo, $amount)
+    {
+        $apiUrl = getenv('NEWEBPAY_ENV') === 'production'
+            ? 'https://core.newebpay.com/API/EWallet/Refund'
+            : 'https://ccore.newebpay.com/API/EWallet/Refund';
+
+        $data = [
+            'RespondType' => 'JSON',
+            'Version' => '1.0',
+            'TimeStamp' => time(),
+            'TradeNo' => $tradeNo,
+            'MerchantOrderNo' => $orderNo,
+            'Amt' => $amount,
         ];
 
         $postData = $this->encrypt(http_build_query($data));
@@ -152,89 +197,14 @@ class NewebPayRefundService
 
     private function encrypt($data)
     {
-        $encrypted = openssl_encrypt(
-            $data,
-            'AES-256-CBC',
-            $this->hashKey,
-            OPENSSL_RAW_DATA,
-            $this->hashIv
-        );
+        $encrypted = openssl_encrypt($data, 'AES-256-CBC', $this->hashKey,
+            OPENSSL_RAW_DATA, $this->hashIv);
         return bin2hex($encrypted);
     }
 }
-
-// 使用範例
-$refund = new NewebPayRefundService();
-$result = $refund->refundCreditCard('ORDER_123456', 1000);
-
-if ($result['Status'] === 'SUCCESS') {
-    echo "退款成功";
-}
 ```
 
----
-
-## 電子錢包退款
-
-適用於 LINE Pay、台灣 Pay 等電子錢包。
-
-### API 端點
-
-| 環境 | URL |
-|------|-----|
-| 測試 | `https://ccore.newebpay.com/API/EWallet/Refund` |
-| 正式 | `https://core.newebpay.com/API/EWallet/Refund` |
-
-### PostData_ 內容
-
-| 參數 | 類型 | 必填 | 說明 |
-|------|------|:----:|------|
-| RespondType | String | ✓ | `JSON` |
-| Version | String | ✓ | `1.0` |
-| TimeStamp | Number | ✓ | Unix timestamp |
-| TradeNo | String | ✓ | 藍新交易序號 |
-| MerchantOrderNo | String | ✓ | 原訂單編號 |
-| Amt | Number | ✓ | 退款金額 |
-
-### PHP 電子錢包退款範例
-
-```php
-<?php
-public function refundEWallet($tradeNo, $orderNo, $amount)
-{
-    $apiUrl = getenv('NEWEBPAY_ENV') === 'production'
-        ? 'https://core.newebpay.com/API/EWallet/Refund'
-        : 'https://ccore.newebpay.com/API/EWallet/Refund';
-
-    $data = [
-        'RespondType' => 'JSON',
-        'Version' => '1.0',
-        'TimeStamp' => time(),
-        'TradeNo' => $tradeNo,
-        'MerchantOrderNo' => $orderNo,
-        'Amt' => $amount,
-    ];
-
-    $postData = $this->encrypt(http_build_query($data));
-
-    $ch = curl_init($apiUrl);
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => http_build_query([
-            'MerchantID_' => $this->merchantId,
-            'PostData_' => $postData,
-        ]),
-        CURLOPT_RETURNTRANSFER => true,
-    ]);
-
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    return json_decode($response, true);
-}
-```
-
-### Node.js 完整退款範例
+### Node.js 退款功能
 
 ```javascript
 const crypto = require('crypto');
@@ -331,9 +301,3 @@ module.exports = NewebPayRefundService;
 2. **部分退款**: 可退款金額 ≤ 原交易金額
 3. **退款次數**: 同一筆交易可多次部分退款
 4. **電子錢包**: 需使用藍新交易序號 (TradeNo)
-
-## 相關 Skills
-
-- `/newebpay` - 總覽與環境設定
-- `/newebpay-checkout` - MPG 幕前支付串接
-- `/newebpay-query` - 交易查詢
