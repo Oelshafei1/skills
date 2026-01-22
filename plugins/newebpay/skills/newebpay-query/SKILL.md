@@ -4,6 +4,7 @@ description: >
   Implements NewebPay transaction query functionality using QueryTradeInfo API.
   Use when building order status checking, transaction verification, or payment
   confirmation features for 藍新金流.
+argument-hint: "[查詢情境: 單筆查詢/批次對帳/狀態確認]"
 context: fork
 agent: general-purpose
 disable-model-invocation: true
@@ -22,6 +23,8 @@ user-invocable: true
 你的任務是在用戶的專案中實作藍新金流交易查詢功能。
 
 ## Step 1: 確認需求
+
+用戶輸入: `$ARGUMENTS`
 
 詢問用戶：
 
@@ -94,118 +97,9 @@ user-invocable: true
 
 ---
 
-## 程式碼範本
+## 詳細參考文件
 
-### PHP 查詢功能
-
-```php
-<?php
-class NewebPayQueryService
-{
-    private $merchantId;
-    private $hashKey;
-    private $hashIv;
-    private $apiUrl;
-
-    public function __construct()
-    {
-        $this->merchantId = getenv('NEWEBPAY_MERCHANT_ID');
-        $this->hashKey = getenv('NEWEBPAY_HASH_KEY');
-        $this->hashIv = getenv('NEWEBPAY_HASH_IV');
-        $this->apiUrl = getenv('NEWEBPAY_ENV') === 'production'
-            ? 'https://core.newebpay.com/API/QueryTradeInfo'
-            : 'https://ccore.newebpay.com/API/QueryTradeInfo';
-    }
-
-    public function queryTrade($orderNo, $amount)
-    {
-        $checkValue = $this->generateCheckValue($orderNo, $amount);
-
-        $params = [
-            'MerchantID' => $this->merchantId,
-            'Version' => '1.3',
-            'RespondType' => 'JSON',
-            'CheckValue' => $checkValue,
-            'TimeStamp' => time(),
-            'MerchantOrderNo' => $orderNo,
-            'Amt' => $amount,
-        ];
-
-        $ch = curl_init($this->apiUrl);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($params),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
-        ]);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        return json_decode($response, true);
-    }
-
-    private function generateCheckValue($orderNo, $amount)
-    {
-        $str = "IV={$this->hashIv}&Amt={$amount}&MerchantID={$this->merchantId}&MerchantOrderNo={$orderNo}&Key={$this->hashKey}";
-        return strtoupper(hash('sha256', $str));
-    }
-}
-
-// 使用範例
-$query = new NewebPayQueryService();
-$result = $query->queryTrade('ORDER_123456', 1000);
-
-if ($result['Status'] === 'SUCCESS') {
-    $tradeStatus = $result['Result']['TradeStatus'];
-    // 0=未付款, 1=已付款, 2=失敗, 3=取消, 6=退款
-}
-```
-
-### Node.js 查詢功能
-
-```javascript
-const crypto = require('crypto');
-const axios = require('axios');
-
-class NewebPayQueryService {
-  constructor() {
-    this.merchantId = process.env.NEWEBPAY_MERCHANT_ID;
-    this.hashKey = process.env.NEWEBPAY_HASH_KEY;
-    this.hashIv = process.env.NEWEBPAY_HASH_IV;
-    this.apiUrl = process.env.NEWEBPAY_ENV === 'production'
-      ? 'https://core.newebpay.com/API/QueryTradeInfo'
-      : 'https://ccore.newebpay.com/API/QueryTradeInfo';
-  }
-
-  async queryTrade(orderNo, amount) {
-    const checkValue = this.generateCheckValue(orderNo, amount);
-
-    const params = new URLSearchParams({
-      MerchantID: this.merchantId,
-      Version: '1.3',
-      RespondType: 'JSON',
-      CheckValue: checkValue,
-      TimeStamp: Math.floor(Date.now() / 1000),
-      MerchantOrderNo: orderNo,
-      Amt: amount,
-    });
-
-    const { data } = await axios.post(this.apiUrl, params.toString(), {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-
-    return data;
-  }
-
-  generateCheckValue(orderNo, amount) {
-    const str = `IV=${this.hashIv}&Amt=${amount}&MerchantID=${this.merchantId}&MerchantOrderNo=${orderNo}&Key=${this.hashKey}`;
-    return crypto.createHash('sha256').update(str).digest('hex').toUpperCase();
-  }
-}
-
-module.exports = NewebPayQueryService;
-```
+- [程式碼範例 (PHP/Node.js)](references/code-examples.md)
 
 ---
 

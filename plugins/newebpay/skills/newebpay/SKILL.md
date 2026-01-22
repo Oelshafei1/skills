@@ -55,7 +55,7 @@ NEWEBPAY_ENV=test  # test 或 production
 
 ## 加密模組
 
-根據用戶框架，提供對應的加密解密函式。詳細實作請參閱 [scripts/encryption.php](../../scripts/encryption.php)
+根據用戶框架，提供對應的加密解密函式。
 
 **PHP:**
 ```php
