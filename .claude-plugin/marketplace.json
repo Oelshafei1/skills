@@ -5,7 +5,7 @@
     "email": "contact@paid.tw"
   },
   "metadata": {
-    "description": "台灣第三方支付金流串接 Skills for Claude Code",
+    "description": "台灣金流 Skills - 支援藍新、綠界、統一金流串接與比較",
     "pluginRoot": "./plugins"
   },
   "plugins": [
