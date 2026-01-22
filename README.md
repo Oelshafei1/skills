@@ -107,17 +107,46 @@ npx skills add --skill payment-help paid-tw/skills
 
 ## 使用方式
 
-安裝後，Claude 會自動在相關情境觸發：
+安裝後，有三種方式使用：
+
+### 1. 自動觸發
+
+在對話中提到相關關鍵字時，Claude 會自動載入對應的 skill：
 
 ```
-# 自動觸發
 > 幫我串接藍新金流的信用卡付款
-
-# 手動呼叫
-> /newebpay LINE Pay 怎麼串接
-> /ecpay 電子發票 API
-> /payuni ATM 轉帳流程
+> 我想用綠界的電子發票 API
 ```
+
+### 2. 手動呼叫
+
+使用 `/skill名稱` 直接呼叫：
+
+```
+> /newebpay
+> /ecpay
+> /payuni
+```
+
+### 3. 帶參數呼叫（推薦）
+
+直接指定想查詢的支付方式，獲得更精準的回答：
+
+```
+> /newebpay LINE Pay      # 聚焦 LINE Pay 整合
+> /newebpay 信用卡分期     # 聚焦信用卡分期付款
+> /newebpay ATM           # 聚焦 ATM 轉帳
+> /ecpay 電子發票          # 聚焦電子發票 API
+```
+
+### 觸發關鍵字
+
+| Skill | 觸發關鍵字 |
+|-------|-----------|
+| newebpay | 藍新、NewebPay、藍新金流、藍新信用卡 |
+| ecpay | 綠界、ECPay、綠界科技 |
+| payuni | PAYUNi、統一金流 |
+| payment-help | 台灣金流、支付整合、哪個金流 |
 
 ## 目錄結構
 
