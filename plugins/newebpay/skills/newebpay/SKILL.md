@@ -53,45 +53,6 @@ NEWEBPAY_ENV=test  # test 或 production
 2. 加入上述環境變數
 3. 確保 `.env` 已加入 `.gitignore`
 
-## 加密模組
-
-根據用戶框架，提供對應的加密解密函式。
-
-**PHP:**
-```php
-function encrypt($data, $key, $iv) {
-    $encrypted = openssl_encrypt($data, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv);
-    return bin2hex($encrypted);
-}
-
-function decrypt($encrypted_hex, $key, $iv) {
-    return rtrim(openssl_decrypt(hex2bin($encrypted_hex), "AES-256-CBC", $key,
-        OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv), "\x00..\x1F");
-}
-
-function generateSha($trade_info, $key, $iv) {
-    return strtoupper(hash("sha256", "HashKey={$key}&{$trade_info}&HashIV={$iv}"));
-}
-```
-
-**Node.js:**
-```javascript
-const crypto = require('crypto');
-
-function encrypt(data, key, iv) {
-  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-  let encrypted = cipher.update(data, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  return encrypted;
-}
-
-function generateSha(tradeInfo, key, iv) {
-  return crypto.createHash('sha256')
-    .update(`HashKey=${key}&${tradeInfo}&HashIV=${iv}`)
-    .digest('hex').toUpperCase();
-}
-```
-
 ## 下一步
 
 完成環境設定後，根據用戶需求引導：
