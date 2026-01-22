@@ -11,22 +11,22 @@
   "plugins": [
     {
       "name": "newebpay",
-      "source": "newebpay",
+      "source": "./newebpay",
       "category": "payment"
     },
     {
       "name": "ecpay",
-      "source": "ecpay",
+      "source": "./ecpay",
       "category": "payment"
     },
     {
       "name": "payuni",
-      "source": "payuni",
+      "source": "./payuni",
       "category": "payment"
     },
     {
       "name": "payment-help",
-      "source": "payment-help",
+      "source": "./payment-help",
       "category": "tools"
     }
   ]
