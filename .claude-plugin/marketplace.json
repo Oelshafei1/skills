@@ -19,9 +19,9 @@
     {
       "name": "newebpay",
       "source": "./plugins/newebpay",
-      "description": "藍新金流(NewebPay)串接 - 信用卡、LINE Pay、ATM、超商",
+      "description": "藍新金流(NewebPay)完整串接 - 支付串接、交易查詢、退款",
       "version": "1.0.0",
-      "keywords": ["newebpay", "藍新", "credit-card", "line-pay"]
+      "keywords": ["newebpay", "藍新", "credit-card", "line-pay", "checkout", "query", "refund"]
     },
     {
       "name": "ecpay",

@@ -84,18 +84,23 @@ npx skills add --skill payment-help paid-tw/skills
 
 **觸發方式**：說「台灣金流」「支付整合」「哪個金流比較好」
 
-### newebpay
+### newebpay（藍新金流）
 
-藍新金流串接指南。
+安裝 `newebpay` plugin 後可使用以下 skills：
 
-**觸發方式**：說「串接藍新」「NewebPay」「藍新金流」
+| Skill | 說明 | 使用時機 |
+|-------|------|---------|
+| `/newebpay` | 總覽與環境設定 | 初次了解、環境設定 |
+| `/newebpay-checkout` | MPG 幕前支付串接 | 建立交易、整合支付頁面 |
+| `/newebpay-query` | 交易查詢 API | 查詢訂單狀態 |
+| `/newebpay-refund` | 退款 API | 信用卡/電子錢包退款 |
 
-**功能**：
-- MPG 幕前支付整合
+**觸發關鍵字**：藍新、NewebPay、藍新金流
+
+**支援的支付方式**：
 - 信用卡（一次付清、分期、紅利）
 - 行動支付（LINE Pay、Apple Pay、Google Pay）
 - ATM 轉帳、超商代碼/條碼
-- 加解密實作（AES256 + SHA256）
 
 ### ecpay
 
@@ -128,24 +133,25 @@ npx skills add --skill payment-help paid-tw/skills
 > /payuni
 ```
 
-### 3. 帶參數呼叫（推薦）
+### 3. 功能專用 Skill（推薦）
 
-直接指定想查詢的支付方式，獲得更精準的回答：
+直接呼叫特定功能的 skill，獲得最精準的回答：
 
 ```
-> /newebpay LINE Pay      # 聚焦 LINE Pay 整合
-> /newebpay 信用卡分期     # 聚焦信用卡分期付款
-> /newebpay ATM           # 聚焦 ATM 轉帳
-> /ecpay 電子發票          # 聚焦電子發票 API
+> /newebpay-checkout LINE Pay   # LINE Pay 串接
+> /newebpay-checkout 信用卡分期  # 信用卡分期串接
+> /newebpay-query               # 查詢交易狀態
+> /newebpay-refund 信用卡        # 信用卡退款
 ```
 
 ### 觸發關鍵字
 
 | Skill | 觸發關鍵字 |
 |-------|-----------|
-| newebpay | 藍新、NewebPay、藍新金流、藍新信用卡 |
-| ecpay | 綠界、ECPay、綠界科技 |
-| payuni | PAYUNi、統一金流 |
+| newebpay | 藍新、NewebPay、藍新金流 |
+| newebpay-checkout | 藍新串接、建立交易、MPG |
+| newebpay-query | 藍新查詢、查詢訂單、交易狀態 |
+| newebpay-refund | 藍新退款、信用卡退款、取消交易 |
 | payment-help | 台灣金流、支付整合、哪個金流 |
 
 ## 目錄結構
@@ -156,18 +162,16 @@ paid-tw/skills/
 │   └── marketplace.json       # Marketplace 目錄
 ├── plugins/
 │   ├── payment-help/          # Help plugin
+│   │   └── skills/payment-help/
+│   ├── newebpay/              # 藍新金流 plugin（含多個 skills）
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
 │   │   └── skills/
-│   │       └── payment-help/
-│   │           └── SKILL.md
-│   ├── newebpay/              # 藍新金流 plugin
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   └── skills/
-│   │       └── newebpay/
-│   │           ├── SKILL.md
-│   │           └── references/
+│   │       ├── newebpay/           # 總覽
+│   │       ├── newebpay-checkout/  # 串接
+│   │       │   └── references/
+│   │       ├── newebpay-query/     # 查詢
+│   │       └── newebpay-refund/    # 退款
 │   ├── ecpay/                 # 綠界科技 plugin
 │   └── payuni/                # PAYUNi plugin
 ├── README.md
@@ -198,7 +202,6 @@ paid-tw/skills/
 - [藍新金流](https://www.newebpay.com)
 - [綠界科技](https://www.ecpay.com.tw)
 - [PAYUNi](https://www.payuni.com.tw)
-- [Claude Code Plugins 文件](https://docs.anthropic.com/en/docs/claude-code/plugins)
 
 ## 授權
 

@@ -14,34 +14,39 @@ paid-tw/skills/
 │   └── marketplace.json       # Marketplace 目錄
 ├── plugins/
 │   ├── payment-help/          # Help plugin
+│   │   └── skills/payment-help/
+│   ├── newebpay/              # 藍新金流（含多個 skills）
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
 │   │   └── skills/
-│   │       └── payment-help/
-│   │           └── SKILL.md
-│   ├── newebpay/              # 藍新金流
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   └── skills/
-│   │       └── newebpay/
-│   │           ├── SKILL.md
-│   │           └── references/
+│   │       ├── newebpay/           # 總覽
+│   │       ├── newebpay-checkout/  # 串接
+│   │       ├── newebpay-query/     # 查詢
+│   │       └── newebpay-refund/    # 退款
 │   ├── ecpay/                 # 綠界科技
-│   │   └── ...
 │   └── payuni/                # PAYUNi
-│       └── ...
 ├── README.md
 ├── AGENTS.md
 └── LICENSE
 ```
 
-## 可用的 Plugins
+## 可用的 Skills
+
+### 藍新金流 (newebpay plugin)
+
+| Skill | 用途 | 觸發關鍵字 |
+|-------|------|-----------|
+| `newebpay` | 總覽與環境設定 | "藍新", "NewebPay" |
+| `newebpay-checkout` | MPG 幕前支付串接 | "藍新串接", "建立交易", "MPG" |
+| `newebpay-query` | 交易查詢 API | "藍新查詢", "查詢訂單" |
+| `newebpay-refund` | 退款 API | "藍新退款", "信用卡退款" |
+
+### 其他 Plugins
 
 | Plugin | 用途 | 觸發關鍵字 |
 |--------|------|-----------|
-| `payment-help` | 列出所有可用的支付 skills | "台灣金流", "支付整合", "哪些金流" |
-| `newebpay` | 藍新金流串接 | "藍新", "NewebPay", "藍新金流" |
-| `ecpay` | 綠界科技串接 | "綠界", "ECPay", "綠界科技" |
+| `payment-help` | 列出所有可用的支付 skills | "台灣金流", "支付整合" |
+| `ecpay` | 綠界科技串接 | "綠界", "ECPay" |
 | `payuni` | PAYUNi 統一金流串接 | "PAYUNi", "統一金流" |
 
 ## Skill 選擇指南
@@ -49,10 +54,11 @@ paid-tw/skills/
 當用戶詢問台灣支付整合時，根據任務選擇適當的 skill：
 
 1. **不確定用哪個金流** → `payment-help`
-2. **要串接藍新金流** → `newebpay`
-3. **要串接綠界科技** → `ecpay`
-4. **要串接 PAYUNi** → `payuni`
-5. **詢問「台灣有哪些金流」** → `payment-help`
+2. **要串接藍新金流** → `newebpay` 或 `newebpay-checkout`
+3. **要查詢藍新交易** → `newebpay-query`
+4. **要藍新退款** → `newebpay-refund`
+5. **要串接綠界科技** → `ecpay`
+6. **要串接 PAYUNi** → `payuni`
 
 ## 整合情境
 
