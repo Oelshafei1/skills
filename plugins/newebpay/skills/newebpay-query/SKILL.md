@@ -4,6 +4,7 @@ description: >
   Implements NewebPay transaction query functionality using QueryTradeInfo API.
   Use when building order status checking, transaction verification, or payment
   confirmation features for 藍新金流.
+argument-hint: "[查詢情境: 單筆查詢/批次對帳/狀態確認]"
 context: fork
 agent: general-purpose
 disable-model-invocation: true
@@ -22,6 +23,8 @@ user-invocable: true
 你的任務是在用戶的專案中實作藍新金流交易查詢功能。
 
 ## Step 1: 確認需求
+
+用戶輸入: `$ARGUMENTS`
 
 詢問用戶：
 

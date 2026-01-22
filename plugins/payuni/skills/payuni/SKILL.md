@@ -35,10 +35,8 @@ user-invocable: true
 
 ## 參考資源
 
-詳細資料請參閱：
-
-- API 說明：[references/api-reference.md](references/api-reference.md)
-- 錯誤碼對照：[references/error-codes.md](references/error-codes.md)
+- [PAYUNi 官方文件](https://www.payuni.com.tw/)
+- 詳細 API 說明與錯誤碼對照將於後續版本提供
 
 ## 相關 Skills
 
