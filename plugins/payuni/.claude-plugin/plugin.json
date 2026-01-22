@@ -1,0 +1,10 @@
+{
+  "name": "payuni",
+  "version": "1.0.0",
+  "description": "PAYUNi 統一金流串接指南",
+  "author": {
+    "name": "paid-tw"
+  },
+  "license": "MIT",
+  "keywords": ["taiwan", "payment", "payuni", "統一金流", "金流"]
+}
