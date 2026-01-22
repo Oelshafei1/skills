@@ -1,6 +1,8 @@
 ---
 name: newebpay
-description: 藍新金流(NewebPay)串接指南。使用於 "藍新", "NewebPay", "藍新金流", "藍新信用卡" 相關問題。提供 MPG 幕前支付、信用卡、LINE Pay、ATM、超商等支付整合。
+description: 藍新金流(NewebPay)串接指南。觸發於「藍新」「NewebPay」「藍新金流」「藍新信用卡」相關問題。
+argument-hint: "[支付方式: 信用卡/LINE Pay/ATM/超商]"
+allowed-tools: Read, Grep, Glob
 license: MIT
 metadata:
   author: paid-tw
@@ -10,6 +12,18 @@ metadata:
 # 藍新金流整合指南
 
 本 skill 提供藍新金流(NewebPay)線上交易幕前支付的完整技術串接指南，版本 NDNF-1.1.9。
+
+## 使用方式
+
+用戶輸入: `$ARGUMENTS`
+
+根據用戶輸入的支付方式，提供對應的整合指南：
+- 若包含「信用卡」「CREDIT」→ 聚焦信用卡相關參數與範例
+- 若包含「LINE Pay」「LINEPAY」→ 聚焦 LINE Pay 整合
+- 若包含「ATM」「轉帳」→ 聚焦 ATM/WebATM 整合
+- 若包含「超商」「CVS」→ 聚焦超商代碼/條碼繳費
+- 若包含「Apple Pay」「Google Pay」→ 聚焦行動支付整合
+- 若無特定指定 → 提供完整概覽
 
 ## 快速開始
 
